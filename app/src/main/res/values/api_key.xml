@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yahoo_weather_key">dj0yJmk9cDdwOGJJY3R6TXZ4JmQ9WVdrOVQzUXljRlJETXpRbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD05OA</string>
+    <string name="weather_underground_key">d18f24776ec61050</string>
+</resources>

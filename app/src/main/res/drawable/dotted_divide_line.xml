@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="line">
+            <stroke
+                android:color="@android:color/black"
+                android:dashWidth="@dimen/dotted_radius"
+                android:dashGap="@dimen/dotted_gap"
+                android:width="@dimen/dotted_width"/>
+        </shape>
+    </item>
+</selector>

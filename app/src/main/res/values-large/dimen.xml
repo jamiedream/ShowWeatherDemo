@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_margin">16sp</dimen>
+    <dimen name="location">48sp</dimen>
+    <dimen name="location_time">36sp</dimen>
+    <dimen name="forecast">42sp</dimen>
+    <dimen name="solid_line">2sp</dimen>
+    <dimen name="dotted_width">1sp</dimen>
+    <dimen name="dotted_radius">1sp</dimen>
+    <dimen name="dotted_gap">1sp</dimen>
+    <dimen name="block_distance">30sp</dimen>
+    <dimen name="block_inner_padding">8sp</dimen>
+</resources>

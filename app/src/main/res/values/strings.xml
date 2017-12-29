@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="forecast">Forecast</string>
+    <string name="detail">Detail</string>
+    <string name="at">Apparent Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="visibility">Visibility</string>
+    <string name="ultraviolet">Ultraviolet</string>
+</resources>

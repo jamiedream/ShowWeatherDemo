@@ -33,6 +33,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
     private ImageView ht1, ht2, ht3, ht4, ht5;
     private ImageView lt1, lt2, lt3, lt4, lt5;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,21 +53,27 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
         getMarshmallowPermission();
 
+        String cityName = "Taichung";
+        String state = "";
+        String baseInfoUrl = "http://api.wunderground.com/api/" + getString(R.string.weather_underground_key) + "/conditions/q/CA/San_Francisco.json";
+        String weeklyForecast = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast"
+                + "%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22"
+                + cityName + "%2C%20ak%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
         QueryAsyncTask task = new QueryAsyncTask();
         try {
+
             //Sunnyvale
             //http://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=2306179 and u='c'
             //http://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid=2306179 and u='c'&format=json
             //http://api.wunderground.com/api/d18f24776ec61050/conditions/q/CA/San_Francisco.json
-            //base information
-            //http://api.wunderground.com/api/" + getString(R.string.weather_underground_key) + "/conditions/q/IA/Cedar_Rapids.json
-            task.execute("http://api.wunderground.com/api/" + getString(R.string.weather_underground_key) + "/hourly/q/CA/San_Francisco.json");
+            task.execute(baseInfoUrl, weeklyForecast);
 
         }catch (Exception e){
 
             Log.i(TAG, e.toString());
 
         }
+
     }
 
     private void getMarshmallowPermission(){

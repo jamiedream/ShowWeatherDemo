@@ -100,6 +100,7 @@
                 android:id="@+id/day1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/day_forecast"
                 android:layout_weight="2"
                 />
@@ -115,6 +116,7 @@
                 android:id="@+id/ht1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/ht_forecast"
                 android:textAlignment="viewEnd"
                 android:layout_weight="2"
@@ -123,6 +125,7 @@
                 android:id="@+id/lt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/lt_forecast"
                 android:textColor="@color/lt"
                 android:textAlignment="viewEnd"
@@ -147,6 +150,7 @@
                 android:id="@+id/day2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/day_forecast"
                 android:layout_weight="2"
                 />
@@ -162,6 +166,7 @@
                 android:id="@+id/ht2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/ht_forecast"
                 android:textAlignment="viewEnd"
                 android:layout_weight="2"
@@ -170,6 +175,7 @@
                 android:id="@+id/lt2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/lt_forecast"
                 android:textColor="@color/lt"
                 android:textAlignment="viewEnd"
@@ -194,6 +200,7 @@
                 android:id="@+id/day3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/day_forecast"
                 android:layout_weight="2"
                 />
@@ -209,6 +216,7 @@
                 android:id="@+id/ht3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/ht_forecast"
                 android:textAlignment="viewEnd"
                 android:layout_weight="2"
@@ -217,6 +225,7 @@
                 android:id="@+id/lt3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/lt_forecast"
                 android:textColor="@color/lt"
                 android:textAlignment="viewEnd"
@@ -241,6 +250,7 @@
                 android:id="@+id/day4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/day_forecast"
                 android:layout_weight="2"
                 />
@@ -256,6 +266,7 @@
                 android:id="@+id/ht4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/ht_forecast"
                 android:textAlignment="viewEnd"
                 android:layout_weight="2"
@@ -264,6 +275,7 @@
                 android:id="@+id/lt4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/lt_forecast"
                 android:textColor="@color/lt"
                 android:textAlignment="viewEnd"
@@ -288,6 +300,7 @@
                 android:id="@+id/day5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/day_forecast"
                 android:layout_weight="2"
                 />
@@ -302,6 +315,7 @@
                 android:id="@+id/ht5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/ht_forecast"
                 android:layout_weight="2"
                 />
@@ -309,6 +323,7 @@
                 android:id="@+id/lt5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/default_value"
                 android:textSize="@dimen/lt_forecast"
                 android:textColor="@color/lt"
                 android:layout_weight="1"
@@ -322,116 +337,131 @@
             />
     </GridLayout>
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_below="@id/forecast_weather"
-        android:columnCount="3"
-        android:rowCount="10"
         android:background="@color/tran_b"
         android:layout_marginTop="@dimen/block_distance"
         android:padding="@dimen/block_inner_padding"
         >
         <TextView
-            android:layout_column="0"
-            android:layout_row="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/detail"
             android:textSize="@dimen/forecast"
+            android:textAlignment="viewStart"
             />
         <TextView
             android:layout_width="match_parent"
-            android:layout_column="0"
-            android:layout_columnSpan="3"
-            android:layout_row="1"
+            android:layout_height="wrap_content"
             android:background="@drawable/solid_divide_line"
             />
-        <ImageView
-            android:id="@+id/current_img"
-            android:layout_column="0"
-            android:layout_row="2"
-            android:layout_rowSpan="7"
-            android:src="@mipmap/ic_launcher"
-            />
-        <TextView
-            android:layout_column="1"
-            android:layout_row="2"
-            android:text="@string/at"
-            android:textSize="@dimen/current_observation_title"
-            />
-        <TextView
-            android:id="@+id/ap"
-            android:layout_column="2"
-            android:layout_row="2"
-            android:text="1"
-            android:textSize="@dimen/current_observation_text"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/current_img"
+                android:src="@mipmap/ic_launcher"
+                android:layout_alignParentStart="true"
+                />
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:rowCount="7"
+                android:columnCount="2"
+                >
+                <TextView
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:text="@string/at"
+                    android:textSize="@dimen/current_observation_title"
+                    />
+                <TextView
+                    android:id="@+id/ap"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:text="@string/default_value"
+                    android:textSize="@dimen/current_observation_text"
+                    android:layout_gravity="end"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_row="1"
+                    android:background="@drawable/dotted_divide_line"
+                    />
+                <TextView
+                    android:layout_column="0"
+                    android:layout_row="2"
+                    android:text="@string/humidity"
+                    android:textSize="@dimen/current_observation_title"
+                    />
+                <TextView
+                    android:id="@+id/humidity"
+                    android:layout_column="1"
+                    android:layout_row="2"
+                    android:text="@string/default_value"
+                    android:textSize="@dimen/current_observation_text"
+                    android:layout_gravity="end"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_row="3"
+                    android:background="@drawable/dotted_divide_line"
+                    />
+                <TextView
+                    android:layout_column="0"
+                    android:layout_row="4"
+                    android:text="@string/visibility"
+                    android:textSize="@dimen/current_observation_title"
+                    />
+                <TextView
+                    android:id="@+id/visibility"
+                    android:layout_column="1"
+                    android:layout_row="4"
+                    android:text="@string/default_value"
+                    android:textSize="@dimen/current_observation_text"
+                    android:layout_gravity="end"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_row="5"
+                    android:background="@drawable/dotted_divide_line"
+                    />
+                <TextView
+                    android:layout_column="0"
+                    android:layout_row="6"
+                    android:text="@string/ultraviolet"
+                    android:textSize="@dimen/current_observation_title"
+                    />
+                <TextView
+                    android:id="@+id/uv"
+                    android:layout_column="1"
+                    android:layout_row="6"
+                    android:text="@string/default_value"
+                    android:textSize="@dimen/current_observation_text"
+                    android:layout_gravity="end"
+                    />
+            </GridLayout>
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
-            android:layout_column="1"
-            android:layout_columnSpan="2"
-            android:layout_row="3"
+            android:layout_height="wrap_content"
             android:background="@drawable/dotted_divide_line"
             />
-        <TextView
-            android:layout_column="1"
-            android:layout_row="4"
-            android:text="@string/humidity"
-            android:textSize="@dimen/current_observation_title"
-            />
-        <TextView
-            android:id="@+id/humidity"
-            android:layout_column="2"
-            android:layout_row="4"
-            android:text="2"
-            android:textSize="@dimen/current_observation_text"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_column="1"
-            android:layout_columnSpan="2"
-            android:layout_row="5"
-            android:background="@drawable/dotted_divide_line"
-            />
-        <TextView
-            android:layout_column="1"
-            android:layout_row="6"
-            android:text="@string/visibility"
-            android:textSize="@dimen/current_observation_title"
-            />
-        <TextView
-            android:id="@+id/visibility"
-            android:layout_column="2"
-            android:layout_row="6"
-            android:text="3"
-            android:textSize="@dimen/current_observation_text"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_column="1"
-            android:layout_columnSpan="2"
-            android:layout_row="7"
-            android:background="@drawable/dotted_divide_line"
-            />
-        <TextView
-            android:layout_column="1"
-            android:layout_row="8"
-            android:text="@string/ultraviolet"
-            android:textSize="@dimen/current_observation_title"
-            />
-        <TextView
-            android:id="@+id/uv"
-            android:layout_column="2"
-            android:layout_row="8"
-            android:text="4"
-            android:textSize="@dimen/current_observation_text"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_column="0"
-            android:layout_columnSpan="3"
-            android:layout_row="9"
-            android:background="@drawable/dotted_divide_line"
-            />
-    </GridLayout>
+    </LinearLayout>
 
 </RelativeLayout>

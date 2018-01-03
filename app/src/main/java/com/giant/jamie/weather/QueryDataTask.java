@@ -16,17 +16,9 @@ import java.net.URL;
  * Created by G96937 on 2017/12/28.
  */
 
-public class QueryAsyncTask extends AsyncTask<String, Void, String> {
+public class QueryDataTask extends AsyncTask<String, Void, String> {
 
-    private String TAG = QueryAsyncTask.class.getSimpleName();
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-//        WeatherForecastActivity.updateUI();
-
-    }
+    private String TAG = QueryDataTask.class.getSimpleName();
 
     @Override
     protected String doInBackground(String... strings) {
@@ -102,10 +94,26 @@ public class QueryAsyncTask extends AsyncTask<String, Void, String> {
             String visibility = json.getJSONObject("current_observation").getString("visibility_mi");
 
             String uvIndex = json.getJSONObject("current_observation").getString("UV");
-            int uv = Integer.valueOf(uvIndex);
-            if(uv < 0){
+            float uv = Integer.valueOf(uvIndex);
+            if(uv < 0f || uv < 3f){
 
-                uvIndex = "0";
+                uvIndex = "Low 0.0";
+
+            }else if(uv > 2f && uv < 6f){
+
+                uvIndex = "Moderate " + uv;
+
+            }else if(uv > 5.9f && uv < 8f){
+
+                uvIndex = "High " + uv;
+
+            }else if(uv > 7.9f && uv < 11f){
+
+                uvIndex = "Very high " + uv;
+
+            }else if(uv > 10.9f){
+
+                uvIndex = "Extreme " + uv;
 
             }
 

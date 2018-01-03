@@ -62,21 +62,24 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
         //UI
         int window_W = Resources.getSystem().getDisplayMetrics().widthPixels;
-        location = findViewById(R.id.location);
-        localtime = findViewById(R.id.local_time);
-        scaleDayForecast(window_W);
-        scaleCurrentObservation(window_W);
+        setBaseInfoUI();
+        setDayForecastUI(window_W);
         updateUI();
 
     }
 
-    private void scaleDayForecast(int w){
+    private void setDayForecastUI(int w){
 
         day1 = findViewById(R.id.day1);
         day2 = findViewById(R.id.day2);
         day3 = findViewById(R.id.day3);
         day4 = findViewById(R.id.day4);
         day5 = findViewById(R.id.day5);
+        weather_image1 = findViewById(R.id.weather_image1);
+        weather_image2 = findViewById(R.id.weather_image2);
+        weather_image3 = findViewById(R.id.weather_image3);
+        weather_image4 = findViewById(R.id.weather_image4);
+        weather_image5 = findViewById(R.id.weather_image5);
         ht1 = findViewById(R.id.ht1);
         ht2 = findViewById(R.id.ht2);
         ht3 = findViewById(R.id.ht3);
@@ -87,6 +90,12 @@ public class WeatherForecastActivity extends AppCompatActivity {
         lt3 = findViewById(R.id.lt3);
         lt4 = findViewById(R.id.lt4);
         lt5 = findViewById(R.id.lt5);
+
+        scaleDayForecastTable(w);
+
+    }
+
+    private void scaleDayForecastTable(int w){
 
         int day_weight = 4;
         int ht_weight = 5;
@@ -120,8 +129,10 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     }
 
-    private void scaleCurrentObservation(int w){
+    private void setBaseInfoUI(){
 
+        location = findViewById(R.id.location);
+        localtime = findViewById(R.id.local_time);
         ap = findViewById(R.id.ap);
         humidity = findViewById(R.id.humidity);
         visibility = findViewById(R.id.visibility);
@@ -353,30 +364,17 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
                             adminCity = getString(R.string.taipei);
 
-                        }
+                        }else{
 
-//                        asyncHandler.postDelayed(this, asyncFrequency);
-//                        break;
+                            asyncHandler.postDelayed(this, asyncFrequency);
+                            break;
+
+                        }
 
                     }else{
 
                         mLocationManager.removeUpdates(mLocationListener);
-
-                        //deal with city string
-                        if(adminCity.contains("CITY")){
-
-                            int length = adminCity.length();
-                            //todo
-                            adminCity.substring(0, length - 5);
-                            Log.i(TAG, length + "_addressCityLength");
-
-                        }else if(adminCity.contains(" ")){
-
-                            adminCity.replace(" ", "_");
-
-                        }
-
-                        Log.i(TAG, adminCity + "_city name");
+                        editCity();
 
                     }
                 }
@@ -394,6 +392,26 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     };
 
+    //deal with city string
+    private void editCity(){
+
+        if(adminCity.contains("CITY")){
+
+            int length = adminCity.length();
+            //todo
+            adminCity.substring(0, length - 5);
+            Log.i(TAG, length + "_addressCityLength");
+
+        }else if(adminCity.contains(" ")){
+
+            adminCity.replace(" ", "_");
+
+        }
+
+        Log.i(TAG, adminCity + "_city name");
+
+    }
+
     private void asyncApi(String state, String cityName){
 
         LastData.editor = LastData.sp.edit();
@@ -406,7 +424,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
                 + "%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22"
                 + cityName + "%2C%20ak%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
-        QueryAsyncTask task = new QueryAsyncTask();
+        QueryDataTask task = new QueryDataTask();
         try {
 
             task.execute(baseInfoUrl, weeklyForecast);
@@ -417,6 +435,15 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
         }
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        countryCode = "";
+        adminCity = "";
 
     }
 

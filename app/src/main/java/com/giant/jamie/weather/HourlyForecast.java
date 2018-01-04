@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 /**
- * Created by G96937 on 2017/12/28.
+ * Created by Jamie on 2018/01/04.
  */
 //http://blog.51cto.com/quietmadman/1613348
 public class HourlyForecast extends LinearLayout {

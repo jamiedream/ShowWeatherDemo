@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,6 +21,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
@@ -30,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by G96937 on 2017/12/28.
+ * Created by Jamie on 2017/12/28.
  */
 
 public class WeatherForecastActivity extends AppCompatActivity {
@@ -48,6 +52,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
     private static TextView ht1, ht2, ht3, ht4, ht5;
     private static TextView lt1, lt2, lt3, lt4, lt5;
     private static TextView ap, visibility, humidity, uv;
+    private static ImageView currentImg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +64,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         DataProcess.sp = getSharedPreferences("cacheData", MODE_PRIVATE);
+        DataProcess.img_sp = getSharedPreferences("weatherImg", MODE_PRIVATE);
 
         //UI
         int window_W = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -137,6 +143,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
         humidity = findViewById(R.id.humidity);
         visibility = findViewById(R.id.visibility);
         uv = findViewById(R.id.uv);
+        currentImg = findViewById(R.id.current_img);
 
     }
 
@@ -166,13 +173,69 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     }
 
+    public static void updateUIImg() {
+
+        int w = Resources.getSystem().getDisplayMetrics().widthPixels;
+        int now = w / 12;
+        int current = w / 4;
+        Log.i("Bitmap", now + "bitmapNow");
+
+        if(now > 0) {
+
+            Bitmap image1 = scaleBitmap("bitmap0", now);
+            Bitmap image2 = scaleBitmap("bitmap1", now);
+            Bitmap image3 = scaleBitmap("bitmap2", now);
+            Bitmap image4 = scaleBitmap("bitmap3", now);
+            Bitmap image5 = scaleBitmap("bitmap4", now);
+            weather_image1.setImageBitmap(image1);
+            weather_image2.setImageBitmap(image2);
+            weather_image3.setImageBitmap(image3);
+            weather_image4.setImageBitmap(image4);
+            weather_image5.setImageBitmap(image5);
+
+        }
+
+        if(current > 0){
+
+            Bitmap image = scaleBitmap("bitmap", current);
+            currentImg.setImageBitmap(image);
+
+        }
+
+    }
+
+    private static Bitmap scaleBitmap( String key, int now){
+
+        String previouslyEncodedImage = DataProcess.sp.getString(key, "");
+        Bitmap resizedBitmap = null;
+        if (!previouslyEncodedImage.equalsIgnoreCase("")) {
+
+            byte[] b = Base64.decode(previouslyEncodedImage, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+
+            int img_w = bitmap.getWidth();
+            int img_h = bitmap.getHeight();
+//            Log.i("Bitmap", img_w +"_bitmapNow");
+            float now_w = (float) (now / img_w);
+            float now_h = (float) (now / img_h);
+//            Log.i("Bitmap", now_w +"_bitmapNow");
+            Matrix matrix = new Matrix();
+            matrix.postScale(now_w, now_h);
+
+            resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, img_w, img_h, matrix, true);
+
+        }
+
+        return resizedBitmap;
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         getMarshmallowPermission();
         getCoordinate();
-
         asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
 
     }

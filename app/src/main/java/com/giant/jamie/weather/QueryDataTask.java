@@ -1,25 +1,29 @@
 package com.giant.jamie.weather;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by G96937 on 2017/12/28.
+ * Created by Jamie on 2017/12/28.
  */
 
 public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     private String TAG = QueryDataTask.class.getSimpleName();
-    private int timeOut = 3000;
+//    private int timeOut = 3000;
 
     @Override
     protected String doInBackground(String... strings) {
@@ -43,8 +47,8 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
             url = new URL(apiAddress);
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(timeOut);
-            httpURLConnection.connect();
+//            httpURLConnection.setConnectTimeout(timeOut);
+//            httpURLConnection.connect();
 
             if(httpURLConnection.getResponseCode() == 200) {
 
@@ -60,6 +64,7 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
                 }
 
             }
+
         }catch(Exception e){
 
             e.printStackTrace();
@@ -78,19 +83,29 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
         String uvIndex;
         if(result.isEmpty()){
 
-            uvIndex = "----";
+            if(DataProcess.sp.getString("uv", "").isEmpty()) {
+
+                uvIndex = "----";
+//                Log.i(TAG, uvIndex + "_uvIndex");
+
+                DataProcess.editor = DataProcess.sp.edit();
+                DataProcess.editor.putString("uv", uvIndex);
+                DataProcess.editor.apply();
+
+            }
 
         }else {
 
             uvIndex = UVIndex(result);
+//            Log.i(TAG, uvIndex + "_uvIndex");
+
+            DataProcess.editor = DataProcess.sp.edit();
+            DataProcess.editor.putString("uv", uvIndex);
+            DataProcess.editor.apply();
 
         }
 
-        Log.i(TAG, uvIndex + "_uvIndex");
 
-        DataProcess.editor = DataProcess.sp.edit();
-        DataProcess.editor.putString("uv", uvIndex);
-        DataProcess.editor.apply();
 
     }
 
@@ -148,22 +163,29 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
         if(result.isEmpty()){
 
-            cityName = "----";
-            localTime = "----";
-            apparentTemperature_c = "----";
-            humidity = "----";
-            visibility = "----";
-            current_img = "not available";
+            if(DataProcess.sp.getString("city", "").isEmpty()) {
+
+                cityName = "----";
+                localTime = "----";
+                apparentTemperature_c = "----";
+                humidity = "----";
+                visibility = "----";
+                current_img = "not available";
+
+                DataProcess.editor = DataProcess.sp.edit();
+                DataProcess.editor.putString("city", cityName);
+                DataProcess.editor.putString("localTime", localTime);
+                DataProcess.editor.putString("ap", apparentTemperature_c + "°");
+                DataProcess.editor.putString("humidity", humidity + "%");
+                DataProcess.editor.putString("visibility", visibility + " m");
+                DataProcess.editor.putString("currentImg", current_img);
+                DataProcess.editor.apply();
+
+            }
 
         }else {
 
             JSONObject json = null;
-            cityName = "----";
-            localTime = "----";
-            apparentTemperature_c = "----";
-            humidity = "----";
-            visibility = "----";
-            current_img = "not available";
 
             try {
 
@@ -194,6 +216,24 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
                         getJSONObject("atmosphere").getString("visibility");
                 current_img = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
                         getJSONObject("item").getJSONObject("condition").getString("text");
+                String bitmap = "";
+                if(!current_img.isEmpty()) {
+                    String url = setURL(current_img);
+                    bitmap = getBitmap(url);
+                }
+
+                DataProcess.editor = DataProcess.sp.edit();
+                DataProcess.editor.putString("city", cityName);
+                DataProcess.editor.putString("localTime", localTime);
+                DataProcess.editor.putString("ap", apparentTemperature_c + "°");
+                DataProcess.editor.putString("humidity", humidity + "%");
+                DataProcess.editor.putString("visibility", visibility + " m");
+                DataProcess.editor.putString("currentImg", current_img);
+                DataProcess.editor.putString("bitmap", bitmap);
+                DataProcess.editor.apply();
+
+//                Log.i(TAG, cityName + "_city_" + localTime + "_localTime_" + apparentTemperature_c
+//                        + "_ap_" + humidity + "_humidity_" + visibility + "_visibility" + current_img + "_currentImg");
 
                 //forecast
                 JSONArray jArray = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
@@ -211,18 +251,6 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
             }
         }
 
-        DataProcess.editor = DataProcess.sp.edit();
-        DataProcess.editor.putString("city", cityName);
-        DataProcess.editor.putString("localTime", localTime);
-        DataProcess.editor.putString("ap", apparentTemperature_c + "°");
-        DataProcess.editor.putString("humidity", humidity + "%");
-        DataProcess.editor.putString("visibility", visibility + " m");
-        DataProcess.editor.putString("currentImg", current_img);
-        DataProcess.editor.apply();
-
-//            Log.i(TAG, cityName + "_city_" + localTime + "_localTime_" + apparentTemperature_c
-//                    + "_ap_" + humidity + "_humidity_" + visibility + "_visibility" + current_img + "_currentImg");
-
     }
 
     private void eachDayWeather(JSONArray array, int num){
@@ -234,12 +262,18 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
             String high_num = fahrenheitToCelsius(dayNum.getString("high"));
             String low_num = fahrenheitToCelsius(dayNum.getString("low"));
             String text_num = dayNum.getString("text");
+            String bitmap_num = "";
+            if(!text_num.isEmpty()) {
+                String url = setURL(text_num);
+                bitmap_num = getBitmap(url);
+            }
 
             DataProcess.editor = DataProcess.sp.edit();
             DataProcess.editor.putString("day" + num, day_num);
             DataProcess.editor.putString("high" + num, high_num + "°");
             DataProcess.editor.putString("low" + num, low_num + "°");
             DataProcess.editor.putString("text" + num, text_num);
+            DataProcess.editor.putString("bitmap" + num, bitmap_num);
             DataProcess.editor.apply();
 
             Log.i(TAG, day_num + "_" + high_num + "_" + low_num + "_" + text_num);
@@ -262,11 +296,46 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     }
 
+    private String getBitmap(String url){
+
+        Bitmap mIcon = null;
+        String encodedImage = "";
+
+        try {
+
+            InputStream in = new java.net.URL(url).openStream();
+            mIcon = BitmapFactory.decodeStream(in);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mIcon.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] b = baos.toByteArray();
+
+            encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        Log.i(TAG, encodedImage);
+        return encodedImage;
+
+    }
+
+    private String setURL(String text){
+
+        int iconNum = DataProcess.getIcon(text);
+        String url = "http://l.yimg.com/a/i/us/we/52/" + iconNum + ".gif";
+
+        return url;
+
+    }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
         WeatherForecastActivity.updateUI();
+        WeatherForecastActivity.updateUIImg();
+
 
     }
 

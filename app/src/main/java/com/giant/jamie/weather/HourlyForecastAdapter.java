@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /**
- * Created by G96937 on 2017/12/28.
+ * Created by Jamie on 2018/01/04.
  */
 
 public class HourlyForecastAdapter extends BaseAdapter {

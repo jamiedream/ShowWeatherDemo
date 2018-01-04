@@ -58,7 +58,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        LastData.sp = getSharedPreferences("cacheData", MODE_PRIVATE);
+        DataProcess.sp = getSharedPreferences("cacheData", MODE_PRIVATE);
 
         //UI
         int window_W = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -142,27 +142,27 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     public static void updateUI(){
 
-        location.setText(LastData.sp.getString("city", ""));
-        localtime.setText(LastData.sp.getString("localTime", ""));
-        day1.setText(LastData.sp.getString("day0", ""));
-        day2.setText(LastData.sp.getString("day1", ""));
-        day3.setText(LastData.sp.getString("day2", ""));
-        day4.setText(LastData.sp.getString("day3", ""));
-        day5.setText(LastData.sp.getString("day4", ""));
-        ht1.setText(LastData.sp.getString("high0", ""));
-        ht2.setText(LastData.sp.getString("high1", ""));
-        ht3.setText(LastData.sp.getString("high2", ""));
-        ht4.setText(LastData.sp.getString("high3", ""));
-        ht5.setText(LastData.sp.getString("high4", ""));
-        lt1.setText(LastData.sp.getString("low0", ""));
-        lt2.setText(LastData.sp.getString("low1", ""));
-        lt3.setText(LastData.sp.getString("low2", ""));
-        lt4.setText(LastData.sp.getString("low3", ""));
-        lt5.setText(LastData.sp.getString("low4", ""));
-        ap.setText(LastData.sp.getString("ap", ""));
-        humidity.setText(LastData.sp.getString("humidity", ""));
-        visibility.setText(LastData.sp.getString("visibility", ""));
-        uv.setText(LastData.sp.getString("uv", ""));
+        location.setText(DataProcess.sp.getString("city", ""));
+        localtime.setText(DataProcess.sp.getString("localTime", ""));
+        day1.setText(DataProcess.sp.getString("day0", ""));
+        day2.setText(DataProcess.sp.getString("day1", ""));
+        day3.setText(DataProcess.sp.getString("day2", ""));
+        day4.setText(DataProcess.sp.getString("day3", ""));
+        day5.setText(DataProcess.sp.getString("day4", ""));
+        ht1.setText(DataProcess.sp.getString("high0", ""));
+        ht2.setText(DataProcess.sp.getString("high1", ""));
+        ht3.setText(DataProcess.sp.getString("high2", ""));
+        ht4.setText(DataProcess.sp.getString("high3", ""));
+        ht5.setText(DataProcess.sp.getString("high4", ""));
+        lt1.setText(DataProcess.sp.getString("low0", ""));
+        lt2.setText(DataProcess.sp.getString("low1", ""));
+        lt3.setText(DataProcess.sp.getString("low2", ""));
+        lt4.setText(DataProcess.sp.getString("low3", ""));
+        lt5.setText(DataProcess.sp.getString("low4", ""));
+        ap.setText(DataProcess.sp.getString("ap", ""));
+        humidity.setText(DataProcess.sp.getString("humidity", ""));
+        visibility.setText(DataProcess.sp.getString("visibility", ""));
+        uv.setText(DataProcess.sp.getString("uv", ""));
 
     }
 
@@ -295,10 +295,10 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
                 try {
 
-                    LastData.editor = LastData.sp.edit();
-                    LastData.editor.putString("lat", LastData.setString(".4f", location.getLatitude()));
-                    LastData.editor.putString("lon", LastData.setString(".4f", location.getLongitude()));
-                    LastData.editor.apply();
+                    DataProcess.editor = DataProcess.sp.edit();
+                    DataProcess.editor.putString("lat", DataProcess.setString(".4f", location.getLatitude()));
+                    DataProcess.editor.putString("lon", DataProcess.setString(".4f", location.getLongitude()));
+                    DataProcess.editor.apply();
 
                     Geocoder geocoder = new Geocoder(getApplicationContext(), new Locale("en", "US"));
                     List<Address> addr = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -374,7 +374,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
                     }else{
 
                         mLocationManager.removeUpdates(mLocationListener);
-                        editCity();
+                        DataProcess.editCity(adminCity);
 
                     }
                 }
@@ -392,32 +392,12 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     };
 
-    //deal with city string
-    private void editCity(){
-
-        if(adminCity.contains("CITY")){
-
-            int length = adminCity.length();
-            //todo
-            adminCity.substring(0, length - 5);
-            Log.i(TAG, length + "_addressCityLength");
-
-        }else if(adminCity.contains(" ")){
-
-            adminCity.replace(" ", "_");
-
-        }
-
-        Log.i(TAG, adminCity + "_city name");
-
-    }
-
     private void asyncApi(String state, String cityName){
 
-        LastData.editor = LastData.sp.edit();
-        LastData.editor.putString("city", cityName);
-        LastData.editor.putString("state", state);
-        LastData.editor.apply();
+        DataProcess.editor = DataProcess.sp.edit();
+        DataProcess.editor.putString("city", cityName);
+        DataProcess.editor.putString("state", state);
+        DataProcess.editor.apply();
 
         String baseInfoUrl = "http://api.wunderground.com/api/" + getString(R.string.weather_underground_key) + "/conditions/q/" + state + "/" + cityName + ".json";
         String weeklyForecast = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast"

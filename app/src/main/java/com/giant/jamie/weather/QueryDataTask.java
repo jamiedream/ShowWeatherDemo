@@ -19,6 +19,7 @@ import java.net.URL;
 public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     private String TAG = QueryDataTask.class.getSimpleName();
+    private int timeOut = 3000;
 
     @Override
     protected String doInBackground(String... strings) {
@@ -26,33 +27,37 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
         String baseInfoResult = "";
         String weeklyForecastResult = "";
 
-        //base info
-        getBaseInformation(httpsConnect(strings[0], baseInfoResult));
+        getWUInformation(httpsConnect(strings[0], baseInfoResult));
 
-        //weekly forecast
-        getWeeklyForecast(httpsConnect(strings[1], weeklyForecastResult));
+        getYahooInformation(httpsConnect(strings[1], weeklyForecastResult));
 
         return null;
     }
 
     private String httpsConnect(String apiAddress, String result){
 
-
         URL url;
         HttpURLConnection httpURLConnection;
 
         try {
+
             url = new URL(apiAddress);
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(timeOut);
+            httpURLConnection.connect();
 
-            InputStream inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            int data = inputStreamReader.read();
-            while (data != -1) {
+            if(httpURLConnection.getResponseCode() == 200) {
 
-                char current = (char) data;
-                result += current;
-                data = inputStreamReader.read();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                int data = inputStreamReader.read();
+                while (data != -1) {
+
+                    char current = (char) data;
+                    result += current;
+                    data = inputStreamReader.read();
+
+                }
 
             }
         }catch(Exception e){
@@ -67,96 +72,156 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     }
 
-    //city, local time, apparent temperature, humidity, visibility, uv index
-    private void getBaseInformation(String result){
+    //uv index
+    private void getWUInformation(String result){
 
+        String uvIndex;
+        if(result.isEmpty()){
+
+            uvIndex = "----";
+
+        }else {
+
+            uvIndex = UVIndex(result);
+
+        }
+
+        Log.i(TAG, uvIndex + "_uvIndex");
+
+        DataProcess.editor = DataProcess.sp.edit();
+        DataProcess.editor.putString("uv", uvIndex);
+        DataProcess.editor.apply();
+
+    }
+
+    private String UVIndex(String result){
+
+        String uvIndex = "----";
         JSONObject json = null;
 
         try {
 
             json = new JSONObject(result);
-            String city = json.getJSONObject("current_observation").getJSONObject("display_location").getString("city");
-
-            String currentTime = json.getJSONObject("current_observation").getString("observation_time");
-            String localTime = "";
-            if(currentTime.length() == 38) {
-
-                localTime = currentTime.substring(27,38);
-
-            }else{
-
-                localTime = currentTime;
-
-            }
-
-            String apparentTemperature_c = json.getJSONObject("current_observation").getString("feelslike_c");
-            String humidity = json.getJSONObject("current_observation").getString("relative_humidity");
-            String visibility = json.getJSONObject("current_observation").getString("visibility_mi");
-
-            String uvIndex = json.getJSONObject("current_observation").getString("UV");
+            uvIndex = json.getJSONObject("current_observation").getString("UV");
             float uv = Integer.valueOf(uvIndex);
-            if(uv < 0f || uv < 3f){
+            if (uv <= 0f || uv < 3f) {
 
                 uvIndex = "Low 0.0";
 
-            }else if(uv > 2f && uv < 6f){
+            } else if (uv > 2f && uv < 6f) {
 
                 uvIndex = "Moderate " + uv;
 
-            }else if(uv > 5.9f && uv < 8f){
+            } else if (uv > 5.9f && uv < 8f) {
 
                 uvIndex = "High " + uv;
 
-            }else if(uv > 7.9f && uv < 11f){
+            } else if (uv > 7.9f && uv < 11f) {
 
                 uvIndex = "Very high " + uv;
 
-            }else if(uv > 10.9f){
+            } else if (uv > 10.9f) {
 
                 uvIndex = "Extreme " + uv;
 
             }
 
-            LastData.editor = LastData.sp.edit();
-            LastData.editor.putString("city", city);
-            LastData.editor.putString("localTime", localTime);
-            LastData.editor.putString("ap", apparentTemperature_c + "°");
-            LastData.editor.putString("humidity", humidity);
-            LastData.editor.putString("visibility", visibility + " km");
-            LastData.editor.putString("uv", uvIndex);
-            LastData.editor.apply();
-
-            Log.i(TAG, city + "_city_" + localTime + "_localTime_" + apparentTemperature_c
-            + "_ap_" + humidity + "_humidity_" + visibility + "_visibility_" + uvIndex + "_uvIndex");
-
         } catch (JSONException e) {
+
             e.printStackTrace();
+
         }
+
+        return uvIndex;
 
     }
 
-    private void getWeeklyForecast(String result){
+    //city, local time, apparent temperature, humidity, visibility
+    private void getYahooInformation(String result){
 
-        JSONObject json = null;
+        String cityName;
+        String localTime;
+        String apparentTemperature_c;
+        String humidity;
+        String visibility;
+        String current_img;
 
-        try{
+        if(result.isEmpty()){
 
-            json = new JSONObject(result);
-            JSONArray jArray = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                    getJSONObject("item").getJSONArray("forecast");
+            cityName = "----";
+            localTime = "----";
+            apparentTemperature_c = "----";
+            humidity = "----";
+            visibility = "----";
+            current_img = "not available";
 
-            //forecast
-            eachDayWeather(jArray, 0);
-            eachDayWeather(jArray, 1);
-            eachDayWeather(jArray, 2);
-            eachDayWeather(jArray, 3);
-            eachDayWeather(jArray, 4);
+        }else {
 
-        }catch(Exception e){
+            JSONObject json = null;
+            cityName = "----";
+            localTime = "----";
+            apparentTemperature_c = "----";
+            humidity = "----";
+            visibility = "----";
+            current_img = "not available";
 
-            e.printStackTrace();
+            try {
 
+                json = new JSONObject(result);
+
+                //base info
+                String city = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("location").getString("city");
+                cityName = DataProcess.editCity(city);
+
+                String lastBuild = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").getString("lastBuildDate");
+                if (lastBuild.length() == 29) {
+
+                    localTime = lastBuild.substring(17, 29);
+//                Log.i(TAG, lastBuild.length()+"");
+
+                } else {
+
+                    localTime = lastBuild;
+
+                }
+
+                apparentTemperature_c = fahrenheitToCelsius(json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("item").getJSONObject("condition").getString("temp"));
+                humidity = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("atmosphere").getString("humidity");
+                visibility = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("atmosphere").getString("visibility");
+                current_img = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("item").getJSONObject("condition").getString("text");
+
+                //forecast
+                JSONArray jArray = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
+                        getJSONObject("item").getJSONArray("forecast");
+                eachDayWeather(jArray, 0);
+                eachDayWeather(jArray, 1);
+                eachDayWeather(jArray, 2);
+                eachDayWeather(jArray, 3);
+                eachDayWeather(jArray, 4);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
         }
+
+        DataProcess.editor = DataProcess.sp.edit();
+        DataProcess.editor.putString("city", cityName);
+        DataProcess.editor.putString("localTime", localTime);
+        DataProcess.editor.putString("ap", apparentTemperature_c + "°");
+        DataProcess.editor.putString("humidity", humidity + "%");
+        DataProcess.editor.putString("visibility", visibility + " m");
+        DataProcess.editor.putString("currentImg", current_img);
+        DataProcess.editor.apply();
+
+//            Log.i(TAG, cityName + "_city_" + localTime + "_localTime_" + apparentTemperature_c
+//                    + "_ap_" + humidity + "_humidity_" + visibility + "_visibility" + current_img + "_currentImg");
 
     }
 
@@ -170,12 +235,12 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
             String low_num = fahrenheitToCelsius(dayNum.getString("low"));
             String text_num = dayNum.getString("text");
 
-            LastData.editor = LastData.sp.edit();
-            LastData.editor.putString("day" + num, day_num);
-            LastData.editor.putString("high" + num, high_num + "°");
-            LastData.editor.putString("low" + num, low_num + "°");
-            LastData.editor.putString("text" + num, text_num);
-            LastData.editor.apply();
+            DataProcess.editor = DataProcess.sp.edit();
+            DataProcess.editor.putString("day" + num, day_num);
+            DataProcess.editor.putString("high" + num, high_num + "°");
+            DataProcess.editor.putString("low" + num, low_num + "°");
+            DataProcess.editor.putString("text" + num, text_num);
+            DataProcess.editor.apply();
 
             Log.i(TAG, day_num + "_" + high_num + "_" + low_num + "_" + text_num);
 
@@ -190,10 +255,10 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     private String fahrenheitToCelsius(String f){
 
-        int int_f = Integer.valueOf(f);
-        int int_c = (int_f - 32) * 5 / 9;
+        float float_f = Float.valueOf(f);
+        float float_c = (float_f - 32) * 5 / 9;
 
-        return String.valueOf(int_c);
+        return String.valueOf((int) float_c);
 
     }
 

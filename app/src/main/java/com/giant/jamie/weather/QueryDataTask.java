@@ -172,6 +172,12 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
                 visibility = "----";
                 current_img = "not available";
 
+                String bitmap = "";
+                if(!current_img.isEmpty()) {
+                    String url = setURL(current_img);
+                    bitmap = getBitmap(url);
+                }
+
                 DataProcess.editor = DataProcess.sp.edit();
                 DataProcess.editor.putString("city", cityName);
                 DataProcess.editor.putString("localTime", localTime);
@@ -179,6 +185,7 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
                 DataProcess.editor.putString("humidity", humidity + "%");
                 DataProcess.editor.putString("visibility", visibility + " m");
                 DataProcess.editor.putString("currentImg", current_img);
+                DataProcess.editor.putString("bitmap", bitmap);
                 DataProcess.editor.apply();
 
             }
@@ -278,7 +285,6 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
             Log.i(TAG, day_num + "_" + high_num + "_" + low_num + "_" + text_num);
 
-
         }catch(Exception e){
 
             e.printStackTrace();
@@ -335,7 +341,6 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
         WeatherForecastActivity.updateUI();
         WeatherForecastActivity.updateUIImg();
-
 
     }
 

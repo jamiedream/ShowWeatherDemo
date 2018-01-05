@@ -1,6 +1,8 @@
 package com.giant.jamie.weather;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -24,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -44,6 +47,8 @@ public class WeatherForecastActivity extends AppCompatActivity {
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private long minTime = 1000;
+    private ImageView refresh;
+    private View progress;
 
     private static TextView location;
     private static TextView localtime;
@@ -62,9 +67,8 @@ public class WeatherForecastActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weatherforecast);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        progress = findViewById(R.id.spinProgress);
         DataProcess.sp = getSharedPreferences("cacheData", MODE_PRIVATE);
-        DataProcess.img_sp = getSharedPreferences("weatherImg", MODE_PRIVATE);
 
         //UI
         int window_W = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -144,6 +148,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
         visibility = findViewById(R.id.visibility);
         uv = findViewById(R.id.uv);
         currentImg = findViewById(R.id.current_img);
+        refresh = findViewById(R.id.refresh);
 
     }
 
@@ -176,9 +181,9 @@ public class WeatherForecastActivity extends AppCompatActivity {
     public static void updateUIImg() {
 
         int w = Resources.getSystem().getDisplayMetrics().widthPixels;
-        int now = w / 12;
+        int now = w / 11;
         int current = w / 4;
-        Log.i("Bitmap", now + "bitmapNow");
+//        Log.i("Bitmap", now + "bitmapNow");
 
         if(now > 0) {
 
@@ -230,13 +235,49 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     }
 
+    final long progressRunTime = 3000;
     @Override
     protected void onResume() {
         super.onResume();
 
+        animationView(progress, View.VISIBLE, 0.4f, progressRunTime);
+
         getMarshmallowPermission();
         getCoordinate();
         asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                animationView(progress, View.VISIBLE, 0.4f, progressRunTime);
+                asyncHandler.removeCallbacks(asyncRunnable);
+                asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
+
+            }
+        });
+
+    }
+
+    private void animationView(final View view, final Integer visiblity, Float alpha, Long duringtime){
+
+        view.bringToFront();
+        boolean show = visiblity == View.VISIBLE;
+        if(show)view.setAlpha(0f);
+
+        view.setVisibility(View.VISIBLE);
+        view.animate().setDuration(duringtime).alpha(alpha).
+                setListener(new AnimatorListenerAdapter() {
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+
+                        view.setVisibility(visiblity);
+
+                    }
+
+                });
 
     }
 
@@ -451,6 +492,8 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
             }
 
+            animationView(progress, View.GONE, 0f, 0L);
+
         }
 
     };
@@ -477,7 +520,6 @@ public class WeatherForecastActivity extends AppCompatActivity {
             Log.i(TAG, e.toString());
 
         }
-
 
     }
 

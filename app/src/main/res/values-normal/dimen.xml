@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <dimen name="activity_margin">8sp</dimen>
+    <dimen name="location">32sp</dimen>
+    <dimen name="location_time">20sp</dimen>
+    <dimen name="day_forecast">20sp</dimen>
+    <dimen name="ht_forecast">24sp</dimen>
+    <dimen name="lt_forecast">24sp</dimen>
+    <dimen name="forecast">32sp</dimen>
+    <dimen name="current_observation_title">16sp</dimen>
+    <dimen name="current_observation_text">16sp</dimen>
+    <dimen name="solid_line">2sp</dimen>
+    <dimen name="dotted_width">1sp</dimen>
+    <dimen name="dotted_radius">1sp</dimen>
+    <dimen name="dotted_gap">1sp</dimen>
+    <dimen name="block_distance">6sp</dimen>
+    <dimen name="block_inner_padding">6sp</dimen>
 </resources>

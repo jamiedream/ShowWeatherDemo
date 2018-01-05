@@ -10,7 +10,6 @@ import android.util.Log;
 public class DataProcess {
 
     static SharedPreferences sp;
-    static SharedPreferences img_sp;
     static SharedPreferences.Editor editor;
 
     public static String setString(String format, Object obj){

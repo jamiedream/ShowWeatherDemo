@@ -9,10 +9,10 @@
     <dimen name="forecast">42sp</dimen>
     <dimen name="current_observation_title">24sp</dimen>
     <dimen name="current_observation_text">24sp</dimen>
-    <dimen name="solid_line">2sp</dimen>
-    <dimen name="dotted_width">1sp</dimen>
-    <dimen name="dotted_radius">1sp</dimen>
-    <dimen name="dotted_gap">1sp</dimen>
+    <dimen name="solid_line">4sp</dimen>
+    <dimen name="dotted_width">2sp</dimen>
+    <dimen name="dotted_radius">2sp</dimen>
+    <dimen name="dotted_gap">2sp</dimen>
     <dimen name="block_distance">30sp</dimen>
-    <dimen name="block_inner_padding">8sp</dimen>
+    <dimen name="block_inner_padding">12sp</dimen>
 </resources>

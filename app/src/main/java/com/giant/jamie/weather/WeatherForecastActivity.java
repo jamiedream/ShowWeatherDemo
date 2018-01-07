@@ -259,7 +259,7 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         final long scan_millis = 6000;
-        animationView(progress, View.VISIBLE, 0.4f, scan_millis);
+        animationView(progress, View.VISIBLE, 0.5f, scan_millis);
         handler.postDelayed(new Runnable() {
 
             @Override

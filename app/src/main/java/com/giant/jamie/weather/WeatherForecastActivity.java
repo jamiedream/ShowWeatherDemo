@@ -235,27 +235,41 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
     }
 
-    final long progressRunTime = 3000;
     @Override
     protected void onResume() {
         super.onResume();
 
-        animationView(progress, View.VISIBLE, 0.4f, progressRunTime);
-
         getMarshmallowPermission();
         getCoordinate();
-        asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
+        scan();
 
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                animationView(progress, View.VISIBLE, 0.4f, progressRunTime);
                 asyncHandler.removeCallbacks(asyncRunnable);
-                asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
+                scan();
 
             }
         });
+
+    }
+
+    private void scan(){
+
+        Handler handler = new Handler();
+        final long scan_millis = 6000;
+        animationView(progress, View.VISIBLE, 0.4f, scan_millis);
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+
+                asyncHandler.postDelayed(asyncRunnable, asyncFrequency);
+
+            }
+
+        }, scan_millis);
 
     }
 
@@ -408,6 +422,11 @@ public class WeatherForecastActivity extends AppCompatActivity {
                     List<Address> addr = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     countryCode = addr.get(0).getCountryCode();
                     adminCity = addr.get(0).getAdminArea();
+                    if(adminCity == null){
+
+                        adminCity = addr.get(0).getSubAdminArea();
+
+                    }
 
                     Log.i(TAG, countryCode + "_address_" + adminCity);
 
@@ -455,6 +474,8 @@ public class WeatherForecastActivity extends AppCompatActivity {
             if(countryCode != null && adminCity != null) {
 
                 Log.i(TAG, "NOT NULL_" + countryCode + "__" + adminCity);
+                mLocationManager.removeUpdates(mLocationListener);
+
                 for(char c: adminCity.toCharArray()) {
 
                     //check if city name is english(for wunder weather)
@@ -468,25 +489,18 @@ public class WeatherForecastActivity extends AppCompatActivity {
 
                             adminCity = getString(R.string.taipei);
 
-                        }else{
-
-                            asyncHandler.postDelayed(this, asyncFrequency);
-                            break;
-
                         }
-
-                    }else{
-
-                        mLocationManager.removeUpdates(mLocationListener);
-                        DataProcess.editCity(adminCity);
 
                     }
                 }
 
+                adminCity = DataProcess.editCity(adminCity);
                 asyncApi(countryCode, adminCity);
+                asyncHandler.removeCallbacks(this);
 
             }else{
 
+                getCoordinate();
                 asyncHandler.postDelayed(this, asyncFrequency);
                 Log.i(TAG, "NULL");
 

@@ -7,19 +7,19 @@ import android.util.Log;
  * Created by Jamie on 2018/1/2.
  */
 
-public class DataProcess {
+class DataProcess {
 
     static SharedPreferences sp;
     static SharedPreferences.Editor editor;
 
-    public static String setString(String format, Object obj){
+    static String setString(String format, Object obj){
 
         return String.format(format.toLowerCase(), obj);
 
     }
 
     //deal with city string
-    public static String editCity(String city){
+    static String editCity(String city){
 
         String cityName = "";
         if(city.contains("City")){
@@ -35,13 +35,18 @@ public class DataProcess {
 
             }
 
+        }else  if(city.contains(" ")){
+
+            //wu name rule
+            cityName = city.replace(" ", "_");
+
         }
 
         return cityName;
 
     }
 
-    public static Integer getIcon(String weather){
+    static Integer getIcon(String weather){
 
         int weather_img = 3200;
 
@@ -71,15 +76,11 @@ public class DataProcess {
         if(weather.equalsIgnoreCase("windy")) weather_img = 24;
         if(weather.equalsIgnoreCase("cold")) weather_img = 25;
         if(weather.equalsIgnoreCase("cloudy")) weather_img = 26;
-        if(weather.equalsIgnoreCase("mostly cloudy (night)")) weather_img = 27;
-        if(weather.equalsIgnoreCase("mostly cloudy (day)")) weather_img = 28;
-        if(weather.equalsIgnoreCase("partly cloudy (night)")) weather_img = 29;
-        if(weather.equalsIgnoreCase("partly cloudy (day)")) weather_img = 30;
-        if(weather.equalsIgnoreCase("clear (night)")) weather_img = 31;
-        if(weather.equalsIgnoreCase("fair (night)")) weather_img = 32;
-        if(weather.equalsIgnoreCase("fair (day)")) weather_img = 33;
+        if(weather.equalsIgnoreCase("mostly cloudy")) weather_img = 28;
+        if(weather.equalsIgnoreCase("partly cloudy")) weather_img = 30;
+        if(weather.equalsIgnoreCase("clear")) weather_img = 31;
         if(weather.equalsIgnoreCase("mixed rain and hail")) weather_img = 34;
-        if(weather.equalsIgnoreCase("fair (day)")) weather_img = 35;
+        if(weather.equalsIgnoreCase("fair")) weather_img = 35;
         if(weather.equalsIgnoreCase("hot")) weather_img = 36;
         if(weather.equalsIgnoreCase("isolated thunderstorms")) weather_img = 37;
         if(weather.equalsIgnoreCase("scattered thunderstorms")) weather_img = 38;

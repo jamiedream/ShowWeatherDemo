@@ -23,7 +23,6 @@ import java.net.URL;
 public class QueryDataTask extends AsyncTask<String, Void, String> {
 
     private String TAG = QueryDataTask.class.getSimpleName();
-//    private int timeOut = 3000;
 
     @Override
     protected String doInBackground(String... strings) {
@@ -31,9 +30,9 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
         String baseInfoResult = "";
         String weeklyForecastResult = "";
 
-        getWUInformation(httpsConnect(strings[0], baseInfoResult));
-
         getYahooInformation(httpsConnect(strings[1], weeklyForecastResult));
+
+        getWUInformation(httpsConnect(strings[0], baseInfoResult));
 
         return null;
     }
@@ -47,8 +46,6 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
 
             url = new URL(apiAddress);
             httpURLConnection = (HttpURLConnection) url.openConnection();
-//            httpURLConnection.setConnectTimeout(timeOut);
-//            httpURLConnection.connect();
 
             if(httpURLConnection.getResponseCode() == 200) {
 
@@ -81,6 +78,7 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
     private void getWUInformation(String result){
 
         String uvIndex;
+        //no connection
         if(result.isEmpty()){
 
             if(DataProcess.sp.getString("uv", "").isEmpty()) {
@@ -97,7 +95,7 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
         }else {
 
             uvIndex = UVIndex(result);
-//            Log.i(TAG, uvIndex + "_uvIndex");
+            Log.i(TAG, uvIndex + "_uvIndex_" + result);
 
             DataProcess.editor = DataProcess.sp.edit();
             DataProcess.editor.putString("uv", uvIndex);
@@ -117,27 +115,38 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
         try {
 
             json = new JSONObject(result);
-            uvIndex = json.getJSONObject("current_observation").getString("UV");
-            float uv = Integer.valueOf(uvIndex);
-            if (uv <= 0f || uv < 3f) {
+            if(json.has("current_observation")&& json.getJSONObject("current_observation").has("UV")) {
+                uvIndex = json.getJSONObject("current_observation").getString("UV");
+                float uv = Integer.valueOf(uvIndex);
+                if (uv <= 0f || uv < 3f) {
 
-                uvIndex = "Low 0.0";
+                    uvIndex = "Low 0.0";
 
-            } else if (uv > 2f && uv < 6f) {
+                } else if (uv > 2f && uv < 6f) {
 
-                uvIndex = "Moderate " + uv;
+                    uvIndex = "Moderate " + uv;
 
-            } else if (uv > 5.9f && uv < 8f) {
+                } else if (uv > 5.9f && uv < 8f) {
 
-                uvIndex = "High " + uv;
+                    uvIndex = "High " + uv;
 
-            } else if (uv > 7.9f && uv < 11f) {
+                } else if (uv > 7.9f && uv < 11f) {
 
-                uvIndex = "Very high " + uv;
+                    uvIndex = "Very high " + uv;
 
-            } else if (uv > 10.9f) {
+                } else if (uv > 10.9f) {
 
-                uvIndex = "Extreme " + uv;
+                    uvIndex = "Extreme " + uv;
+
+                }
+            }else {
+
+                uvIndex = "----";
+//                Log.i(TAG, uvIndex + "_uvIndex");
+
+                DataProcess.editor = DataProcess.sp.edit();
+                DataProcess.editor.putString("uv", uvIndex);
+                DataProcess.editor.apply();
 
             }
 
@@ -154,25 +163,19 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
     //city, local time, apparent temperature, humidity, visibility
     private void getYahooInformation(String result){
 
-        String cityName;
-        String localTime;
-        String apparentTemperature_c;
-        String humidity;
-        String visibility;
-        String current_img;
+        String cityName = "----";
+        String localTime = "----";
+        String apparentTemperature_c = "----";
+        String humidity = "----";
+        String visibility = "----";
+        String current_img = "not available";
+        String bitmap = "";
 
+        //no connection
         if(result.isEmpty()){
 
             if(DataProcess.sp.getString("city", "").isEmpty()) {
 
-                cityName = "----";
-                localTime = "----";
-                apparentTemperature_c = "----";
-                humidity = "----";
-                visibility = "----";
-                current_img = "not available";
-
-                String bitmap = "";
                 if(!current_img.isEmpty()) {
                     String url = setURL(current_img);
                     bitmap = getBitmap(url);
@@ -197,36 +200,65 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
             try {
 
                 json = new JSONObject(result);
+                JSONObject jsonObject = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel");
 
                 //base info
-                String city = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                        getJSONObject("location").getString("city");
-                cityName = DataProcess.editCity(city);
+                if(jsonObject.has("location") && jsonObject.getJSONObject("location").has("city")) {
 
-                String lastBuild = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").getString("lastBuildDate");
-                if (lastBuild.length() == 29) {
-
-                    localTime = lastBuild.substring(17, 29);
-//                Log.i(TAG, lastBuild.length()+"");
-
-                } else {
-
-                    localTime = lastBuild;
+                    String city = jsonObject.getJSONObject("location").getString("city");
+                    cityName = DataProcess.editCity(city);
 
                 }
 
-                apparentTemperature_c = fahrenheitToCelsius(json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                        getJSONObject("item").getJSONObject("condition").getString("temp"));
-                humidity = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                        getJSONObject("atmosphere").getString("humidity");
-                visibility = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                        getJSONObject("atmosphere").getString("visibility");
-                current_img = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").
-                        getJSONObject("item").getJSONObject("condition").getString("text");
-                String bitmap = "";
-                if(!current_img.isEmpty()) {
-                    String url = setURL(current_img);
-                    bitmap = getBitmap(url);
+                if(jsonObject.has("lastBuildDate")) {
+
+                    String lastBuild = jsonObject.getString("lastBuildDate");
+                    if (lastBuild.length() == 29) {
+
+                        localTime = lastBuild.substring(17, 29);
+//                Log.i(TAG, lastBuild.length()+"");
+
+                    } else {
+
+                        localTime = lastBuild;
+
+                    }
+
+                }
+
+                if(jsonObject.has("item")&& jsonObject.getJSONObject("item").has("condition")) {
+
+                    if(jsonObject.getJSONObject("item").getJSONObject("condition").has("temp")) {
+
+                        apparentTemperature_c = fahrenheitToCelsius(jsonObject.getJSONObject("item").getJSONObject("condition").getString("temp"));
+
+                    }
+
+                    if(jsonObject.getJSONObject("item").getJSONObject("condition").has("text")) {
+
+                        current_img = jsonObject.getJSONObject("item").getJSONObject("condition").getString("text");
+                        if(!current_img.isEmpty()) {
+                            String url = setURL(current_img);
+                            bitmap = getBitmap(url);
+                        }
+                    }
+
+                }
+
+                if(jsonObject.has("atmosphere")){
+
+                    if(jsonObject.getJSONObject("atmosphere").has("humidity")){
+
+                        humidity = jsonObject.getJSONObject("atmosphere").getString("humidity");
+
+                    }
+
+                    if(jsonObject.getJSONObject("atmosphere").has("visibility")){
+
+                        visibility = jsonObject.getJSONObject("atmosphere").getString("visibility");
+
+                    }
+
                 }
 
                 DataProcess.editor = DataProcess.sp.edit();
@@ -239,8 +271,8 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
                 DataProcess.editor.putString("bitmap", bitmap);
                 DataProcess.editor.apply();
 
-//                Log.i(TAG, cityName + "_city_" + localTime + "_localTime_" + apparentTemperature_c
-//                        + "_ap_" + humidity + "_humidity_" + visibility + "_visibility" + current_img + "_currentImg");
+                Log.i(TAG, cityName + "_city_" + localTime + "_localTime_" + apparentTemperature_c
+                        + "_ap_" + humidity + "_humidity_" + visibility + "_visibility" + current_img + "_currentImg");
 
                 //forecast
                 JSONArray jArray = json.getJSONObject("query").getJSONObject("results").getJSONObject("channel").

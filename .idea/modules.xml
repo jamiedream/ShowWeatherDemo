@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Weather.iml" filepath="$PROJECT_DIR$/Weather.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShowWeather.iml" filepath="$PROJECT_DIR$/ShowWeather.iml" />
+      <module fileurl="file://C:\Users\G96937\Desktop\ShowWeather\Weather.iml" filepath="C:\Users\G96937\Desktop\ShowWeather\Weather.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\G96937\Desktop\ShowWeather\app\app.iml" filepath="C:\Users\G96937\Desktop\ShowWeather\app\app.iml" />
     </modules>
   </component>
 </project>

@@ -117,7 +117,7 @@ public class QueryDataTask extends AsyncTask<String, Void, String> {
             json = new JSONObject(result);
             if(json.has("current_observation")&& json.getJSONObject("current_observation").has("UV")) {
                 uvIndex = json.getJSONObject("current_observation").getString("UV");
-                float uv = Integer.valueOf(uvIndex);
+                float uv = Float.valueOf(uvIndex);
                 if (uv <= 0f || uv < 3f) {
 
                     uvIndex = "Low 0.0";

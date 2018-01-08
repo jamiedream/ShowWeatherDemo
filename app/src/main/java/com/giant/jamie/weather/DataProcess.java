@@ -40,6 +40,10 @@ class DataProcess {
             //wu name rule
             cityName = city.replace(" ", "_");
 
+        }else{
+
+            cityName = city;
+
         }
 
         return cityName;
@@ -78,7 +82,7 @@ class DataProcess {
         if(weather.equalsIgnoreCase("cloudy")) weather_img = 26;
         if(weather.equalsIgnoreCase("mostly cloudy")) weather_img = 28;
         if(weather.equalsIgnoreCase("partly cloudy")) weather_img = 30;
-        if(weather.equalsIgnoreCase("clear")) weather_img = 31;
+        if(weather.equalsIgnoreCase("clear")||  weather.contains("Sunny")) weather_img = 32;
         if(weather.equalsIgnoreCase("mixed rain and hail")) weather_img = 34;
         if(weather.equalsIgnoreCase("fair")) weather_img = 35;
         if(weather.equalsIgnoreCase("hot")) weather_img = 36;
